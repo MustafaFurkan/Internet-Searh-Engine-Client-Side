@@ -47,7 +47,7 @@ public class NewJFrame extends javax.swing.JFrame {
     FileWriter fw;
     
     public static void sendRequest(String address) throws IOException{
-        Socket s = new Socket(address, 9090);
+        Socket s = new Socket(address, 8080);
         input  = new BufferedReader(new InputStreamReader(s.getInputStream()));
         out = new PrintWriter(s.getOutputStream());               
     }
@@ -485,60 +485,93 @@ public class NewJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenu2MousePressed
 
     
-  public void getData() throws IOException {
-       ownResult.clear();
-       for(;;){
+    public void getData1() throws IOException {
+        ownResult.clear();
+        String str=new String();
+      
+
+        str =   input.readLine();
+        int numData1 = Integer.parseInt(str);
+
+        
+        for( int i=0; i<numData1; ++i ){
             
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            System.out.print("Enter String: ");
-            String str = br.readLine();
-            
-            out.println(str);
-            out.flush();
-            
-            if(Character.isLetter(str.charAt(0))){
-                
-                str =  input.readLine();
-                System.err.println(str);
-                
-                if(str.equals("0"))
-                    
-                    continue;
+            try{
+                String str1 = input.readLine();  
+                ownResult.add(new Result(str1,input.readLine()));
+            }catch(Exception e){
+                System.err.println(e.getMessage());
             }
+        
+        
+        }
+        
+        for(int i=0; i<numData1; ++i){
+
+            StringBuilder path = new StringBuilder();
+            path.append("/home/canerbakar/Desktop/filesendtestfolder1/");
+            path.append(i);
+            path.append(".jpg");
+
+            str = input.readLine();
+            byte[] decodedBytes =  Base64.decodeBase64(str);
+
+            //create file
+            File file = new File(path.toString());
+            file.createNewFile();
+
+            OutputStream outFile = new FileOutputStream(file);
+            outFile.write(decodedBytes);
+            outFile.close();
+        }
+        
+    }
+    
+    
+    public void getData(String search) throws IOException {
+        ownResult.clear();
+        String str=new String();
+      
+
+        str =   input.readLine();
+        int numData = Integer.parseInt(str);
+        String str2 =   input.readLine();
+        int numData1 = Integer.parseInt(str2);
+        
+        for( int i=0; i<numData1; ++i ){
             
-            str =   input.readLine();
-            System.err.println(str);
-            
-            int numData = Integer.parseInt(str);
-            
-            for(int i=0; i<numData; ++i){
-                
-                System.out.println(input.readLine());
-                System.out.println(input.readLine());
-                
+            try{
+                String str1 = input.readLine();  
+                ownResult.add(new Result(str1,input.readLine()));
+            }catch(Exception e){
+                System.err.println(e.getMessage());
             }
-            
-            for(int i=0; i<numData; ++i){
-                
-                StringBuilder path = new StringBuilder();
-                path.append("/home/canerbakar/Desktop/filesendtestfolder/");
-                path.append(i);
-                path.append(".jpg");
-                
-                str = input.readLine();
-                byte[] decodedBytes =  Base64.decodeBase64(str);
-                
-                //create file
-                File file = new File(path.toString());
-                file.createNewFile();
-                
-                OutputStream outFile = new FileOutputStream(file);
-                outFile.write(decodedBytes);
-                outFile.close();
-            }      
-        }  
-       
- }
+        
+        
+        }
+        
+        for(int i=0; i<numData1; ++i){
+
+            StringBuilder path = new StringBuilder();
+            path.append("/home/canerbakar/Desktop/filesendtestfolder1/");
+            path.append(i);
+            path.append(".jpg");
+
+            str = input.readLine();
+            byte[] decodedBytes =  Base64.decodeBase64(str);
+
+            //create file
+            File file = new File(path.toString());
+            file.createNewFile();
+
+            OutputStream outFile = new FileOutputStream(file);
+            outFile.write(decodedBytes);
+            outFile.close();
+        }
+        
+    }
+     
+     
     
     private void jButton1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MousePressed
         // Search button clicked.
@@ -547,7 +580,7 @@ public class NewJFrame extends javax.swing.JFrame {
         out.flush();
         unhideElement();
         try {
-            getData();
+            getData(jTextField1.getText());
         } catch (IOException ex) {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -604,6 +637,35 @@ public class NewJFrame extends javax.swing.JFrame {
                 jLabel5.setText(ownResult.get(4).getUrl());
              
             }
+            
+            BufferedImage img=null;
+            ArrayList<File> ff=new ArrayList<File>();
+            listf("/home/canerbakar/Desktop/filesendtestfolder1",ff);
+            
+            for (int z = 0; z < 5; z++) {
+                        
+                try {
+                    img = ImageIO.read(new File(
+                    ff.get(z).getAbsolutePath()));
+                } catch (IOException ex) {
+
+                    Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                ImageIcon icon=new ImageIcon(img);
+                if ( z % 5 ==  0 )
+                    jLabel7.setIcon(icon);
+                else if ( z % 5 == 1)
+                    jLabel8.setIcon(icon);
+                else if ( z % 5 == 2)
+                    jLabel9.setIcon(icon);
+                else if ( z % 5 == 3)
+                    jLabel10.setIcon(icon);
+                else if ( z % 5 == 4)
+                    jLabel11.setIcon(icon);
+
+            }
+            
             JMenuItem addingItem = new JMenuItem(jTextField1.getText());
             jMenu1.add(addingItem);
             try {
@@ -664,7 +726,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
         // TODO add your handling code here:
-        
+         
       if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
         // Enter was pressed. Your code goes here.
         if(jTextField1.getText().length() <= 3){
@@ -672,7 +734,7 @@ public class NewJFrame extends javax.swing.JFrame {
             out.flush();
             unhideElement();
             try{
-                getData();
+                getData(jTextField1.getText());
             }catch(IOException myExp){
                 System.out.println(myExp.toString());
             }
@@ -683,11 +745,6 @@ public class NewJFrame extends javax.swing.JFrame {
         }else{
             getDialog(this,"Aramayı lütfen 3 harfli kelimeler ile yapın.");
         }
-        
-       
-        
-
-       
        
         if(jTextField1.getText().length() == 3){
             //JMenu1
@@ -742,6 +799,47 @@ public class NewJFrame extends javax.swing.JFrame {
                 ArrayList<File> ff=new ArrayList<File>();
                 
             }
+            
+            BufferedImage img=null;
+            ArrayList<File> ff=new ArrayList<File>();
+            listf("/home/canerbakar/Desktop/filesendtestfolder1",ff);
+            
+            for (int z = 0; z < 5; z++) {
+
+                try {
+
+                    img = ImageIO.read(new File(
+                    ff.get(z).getAbsolutePath()));
+                } catch (IOException ex) {
+
+                    Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                ImageIcon icon=new ImageIcon(img);
+                if ( z % 5 ==  0 ){
+                    jLabel7.setIcon(icon);
+                    //jLabel7.setText(jLabel1.getText());
+                }
+                else if ( z % 5 == 1){
+                    jLabel8.setIcon(icon);
+                    /*jLabel8.setText(jLabel2.getText());*/
+                }
+                else if ( z % 5 == 2){
+                    jLabel9.setIcon(icon);
+                   // jLabel7.setText(jLabel3.getText());
+                }
+                else if ( z % 5 == 3){
+                    jLabel10.setIcon(icon);
+                    //jLabel10.setText(jLabel4.getText());
+                }
+                else if ( z % 5 == 4){
+                    jLabel11.setIcon(icon);
+                    //jLabel10.setText(jLabel5.getText());
+                }
+
+            }
+            
+            
             JMenuItem addingItem = new JMenuItem(jTextField1.getText());
             jMenu1.add(addingItem);
             try {
@@ -755,7 +853,19 @@ public class NewJFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTextField1KeyPressed
 
+    public void listf(String directoryName, ArrayList<File> files) {
+        File directory = new File(directoryName);
+
     
+        File[] fList = directory.listFiles();
+        for (File file : fList) {
+            if (file.isFile()) {
+                files.add(file);
+            } else if (file.isDirectory()) {
+                listf(file.getAbsolutePath(), files);
+            }
+        }
+    }
     
     
     private void label2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label2MousePressed
@@ -870,10 +980,11 @@ public class NewJFrame extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         //resetElementHide();
+        
         System.out.println("Page < tıklandı");
         System.out.println("OwnResult size = " + ownResult.size() );
         
-        int maxIndex = ownResult.size() / 5;
+        int maxIndex=20;
         if(ownResult.size() % 5 != 0){
             maxIndex += 1;
         }
@@ -884,6 +995,8 @@ public class NewJFrame extends javax.swing.JFrame {
         }else
         {
             pageIndex += 1;
+            out.println(pageIndex);
+            out.flush();
             if(pageIndex == maxIndex){
                 try {
                     checkLastPage();
@@ -891,6 +1004,11 @@ public class NewJFrame extends javax.swing.JFrame {
                     Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }else{
+                try {
+                    getData1();
+                } catch (IOException ex) {
+                    Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 checkinterPages(pageIndex);
             }
             
@@ -915,6 +1033,11 @@ public class NewJFrame extends javax.swing.JFrame {
         }else{
             pageIndex -= 1;
             if(pageIndex > 1){
+                try {
+                    getData1();
+                } catch (IOException ex) {
+                    Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
                checkinterPages(pageIndex);
             }
             if(pageIndex == 1){
@@ -986,25 +1109,26 @@ public class NewJFrame extends javax.swing.JFrame {
     
     public void checkinterPages(int pageInt){
         label1.setVisible(true);
-        label1.setText(ownResult.get(pageInt*5).getUrl());
+        System.out.println("asdasdasda:" + ownResult.size());
+        label1.setText(ownResult.get(0).getUrl());
         label2.setVisible(true);
-        label2.setText(ownResult.get(pageInt*5 + 1).getUrl());
+        label2.setText(ownResult.get(1).getUrl());
         label3.setVisible(true);
-        label3.setText(ownResult.get(pageInt*5 + 2).getUrl());
+        label3.setText(ownResult.get(2).getUrl());
         label4.setVisible(true);
-        label4.setText(ownResult.get(pageInt*5 + 3).getUrl());
+        label4.setText(ownResult.get(3).getUrl());
         label5.setVisible(true);
-        label5.setText(ownResult.get(pageInt*5 + 4).getUrl());
+        label5.setText(ownResult.get(4).getUrl());
         jLabel1.setVisible(true);
-        jLabel1.setText(ownResult.get(pageInt*5).getTitle());
+        jLabel1.setText(ownResult.get(0).getTitle());
         jLabel2.setVisible(true);
-        jLabel2.setText(ownResult.get(pageInt*5 + 1).getTitle());
+        jLabel2.setText(ownResult.get(1).getTitle());
         jLabel3.setVisible(true);
-        jLabel3.setText(ownResult.get(pageInt*5 + 2).getTitle());
+        jLabel3.setText(ownResult.get(2).getTitle());
         jLabel4.setVisible(true);
-        jLabel4.setText(ownResult.get(pageInt*5 + 3).getTitle());
+        jLabel4.setText(ownResult.get(3).getTitle());
         jLabel5.setVisible(true);
-        jLabel5.setText(ownResult.get(pageInt*5 + 4).getTitle());
+        jLabel5.setText(ownResult.get(4).getTitle());
     }
     
     public void checkFirstPage(){
