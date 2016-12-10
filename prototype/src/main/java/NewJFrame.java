@@ -17,21 +17,26 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+//import java.util.;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.binary.Base64;
+
 
 /**
  *
  * @author user
  */
-public class NewJFrame extends javax.swing.JFrame implements Runnable{
+public class NewJFrame extends javax.swing.JFrame {
     
     private static Object lock = new Object();
     static BufferedReader input;
@@ -42,7 +47,7 @@ public class NewJFrame extends javax.swing.JFrame implements Runnable{
     FileWriter fw;
     
     public static void sendRequest(String address) throws IOException{
-        Socket s = new Socket(address, 3030);
+        Socket s = new Socket(address, 9090);
         input  = new BufferedReader(new InputStreamReader(s.getInputStream()));
         out = new PrintWriter(s.getOutputStream());               
     }
@@ -453,7 +458,7 @@ public class NewJFrame extends javax.swing.JFrame implements Runnable{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+   
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
@@ -480,19 +485,59 @@ public class NewJFrame extends javax.swing.JFrame implements Runnable{
     }//GEN-LAST:event_jMenu2MousePressed
 
     
-  public void getData() {
-        ownResult.clear();
-        for( ;; ){
+  public void getData() throws IOException {
+       ownResult.clear();
+       for(;;){
             
-        try{
-            String str = input.readLine();  
-        if(str.equals("-")) // done    
-            return ;
-            ownResult.add(new Result(str,input.readLine()));
-        }catch(Exception e){
-            System.err.println(e.getMessage());
-        }
-      }
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            System.out.print("Enter String: ");
+            String str = br.readLine();
+            
+            out.println(str);
+            out.flush();
+            
+            if(Character.isLetter(str.charAt(0))){
+                
+                str =  input.readLine();
+                System.err.println(str);
+                
+                if(str.equals("0"))
+                    
+                    continue;
+            }
+            
+            str =   input.readLine();
+            System.err.println(str);
+            
+            int numData = Integer.parseInt(str);
+            
+            for(int i=0; i<numData; ++i){
+                
+                System.out.println(input.readLine());
+                System.out.println(input.readLine());
+                
+            }
+            
+            for(int i=0; i<numData; ++i){
+                
+                StringBuilder path = new StringBuilder();
+                path.append("/home/canerbakar/Desktop/filesendtestfolder/");
+                path.append(i);
+                path.append(".jpg");
+                
+                str = input.readLine();
+                byte[] decodedBytes =  Base64.decodeBase64(str);
+                
+                //create file
+                File file = new File(path.toString());
+                file.createNewFile();
+                
+                OutputStream outFile = new FileOutputStream(file);
+                outFile.write(decodedBytes);
+                outFile.close();
+            }      
+        }  
+       
  }
     
     private void jButton1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MousePressed
@@ -501,15 +546,12 @@ public class NewJFrame extends javax.swing.JFrame implements Runnable{
         out.println(jTextField1.getText());
         out.flush();
         unhideElement();
-        getData();
-        
-        for ( int u=0;u<5;++u){
-             String[] c = new String[] {"/bin/bash", "-c", "phantomjs /home/canerbakar/Desktop/github.js " 
-             + ownResult.get(u).getUrl()};
-            result1=c;
-            Thread t1=(new Thread(new NewJFrame(result1)));
-            t1.start();
+        try {
+            getData();
+        } catch (IOException ex) {
+            Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
            
        
         if(jTextField1.getText().length() == 3){
@@ -560,36 +602,7 @@ public class NewJFrame extends javax.swing.JFrame implements Runnable{
             
                 label5.setText(ownResult.get(4).getTitle());
                 jLabel5.setText(ownResult.get(4).getUrl());
-                
-                BufferedImage img=null;
-                ArrayList<File> ff=new ArrayList<File>();
-                listf("/home/canerbakar/Desktop/caner/prototype/http:",ff);
-                
-                synchronized (lock) {
-                    for (int z = 0; z < 5; z++) {
-                        
-                            try {
-                                img = ImageIO.read(new File(
-                                ff.get(z).getAbsolutePath()));
-                            } catch (IOException ex) {
-
-                                Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-
-                            ImageIcon icon=new ImageIcon(img);
-                            if ( z % 5 ==  0 )
-                                jLabel7.setIcon(icon);
-                            else if ( z % 5 == 1)
-                                jLabel8.setIcon(icon);
-                            else if ( z % 5 == 2)
-                                jLabel9.setIcon(icon);
-                            else if ( z % 5 == 3)
-                                jLabel10.setIcon(icon);
-                            else if ( z % 5 == 4)
-                                jLabel11.setIcon(icon);
-                       
-                    }
-                }
+             
             }
             JMenuItem addingItem = new JMenuItem(jTextField1.getText());
             jMenu1.add(addingItem);
@@ -605,21 +618,8 @@ public class NewJFrame extends javax.swing.JFrame implements Runnable{
             }
     }//GEN-LAST:event_jButton1MousePressed
 
-    public void listf(String directoryName, ArrayList<File> files) {
-        File directory = new File(directoryName);
-
-    
-        File[] fList = directory.listFiles();
-        for (File file : fList) {
-            if (file.isFile()) {
-                files.add(file);
-            } else if (file.isDirectory()) {
-                listf(file.getAbsolutePath(), files);
-            }
-        }
-    }
-    
-    
+   
+     
     public String toEncode(String str) throws IOException{
         
         File fileDir = new File("/home/canerbakar/Desktop/historyLog.txt");
@@ -667,20 +667,26 @@ public class NewJFrame extends javax.swing.JFrame implements Runnable{
         
       if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
         // Enter was pressed. Your code goes here.
+        if(jTextField1.getText().length() <= 3){
+            out.println(jTextField1.getText());
+            out.flush();
+            unhideElement();
+            try{
+                getData();
+            }catch(IOException myExp){
+                System.out.println(myExp.toString());
+            }
+            
+            int maxPageNumber = ownResult.indexOf(0);
+            System.out.println(maxPageNumber);
+            
+        }else{
+            getDialog(this,"Aramayı lütfen 3 harfli kelimeler ile yapın.");
+        }
         
-        out.println(jTextField1.getText());
-        out.flush();
-        unhideElement();
-        getData();
        
         
-        for ( int u=0;u<5;++u){
-             String[] c = new String[] {"/bin/bash", "-c", "phantomjs /home/canerbakar/Desktop/github.js " 
-             + ownResult.get(u).getUrl()};
-            result1=c;
-            Thread t1=(new Thread(new NewJFrame(result1)));
-            t1.start();
-        }
+
        
        
         if(jTextField1.getText().length() == 3){
@@ -734,44 +740,7 @@ public class NewJFrame extends javax.swing.JFrame implements Runnable{
                 
                 BufferedImage img=null;
                 ArrayList<File> ff=new ArrayList<File>();
-                listf("/home/canerbakar/Desktop/caner/prototype/http:",ff);
                 
-                synchronized (lock) {
-                    for (int z = 0; z < 5; z++) {
-                        
-                            try {
-                              
-                                img = ImageIO.read(new File(
-                                ff.get(z).getAbsolutePath()));
-                            } catch (IOException ex) {
-
-                                Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-
-                            ImageIcon icon=new ImageIcon(img);
-                            if ( z % 5 ==  0 ){
-                                jLabel7.setIcon(icon);
-                                //jLabel7.setText(jLabel1.getText());
-                            }
-                            else if ( z % 5 == 1){
-                                jLabel8.setIcon(icon);
-                                /*jLabel8.setText(jLabel2.getText());*/
-                            }
-                            else if ( z % 5 == 2){
-                                jLabel9.setIcon(icon);
-                               // jLabel7.setText(jLabel3.getText());
-                            }
-                            else if ( z % 5 == 3){
-                                jLabel10.setIcon(icon);
-                                //jLabel10.setText(jLabel4.getText());
-                            }
-                            else if ( z % 5 == 4){
-                                jLabel11.setIcon(icon);
-                                //jLabel10.setText(jLabel5.getText());
-                            }
-                       
-                    }
-                }
             }
             JMenuItem addingItem = new JMenuItem(jTextField1.getText());
             jMenu1.add(addingItem);
@@ -782,8 +751,6 @@ public class NewJFrame extends javax.swing.JFrame implements Runnable{
             }
 
             
-            }else{
-                getDialog(this,"Aramayı lütfen 3 harfli kelimeler ile yapın.");
             }
         }
     }//GEN-LAST:event_jTextField1KeyPressed
@@ -1335,32 +1302,8 @@ public class NewJFrame extends javax.swing.JFrame implements Runnable{
     private java.awt.Label label5;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public void run() {
-        Process proc = null;
-	
-        synchronized(lock) {
-            while (isVisible()){
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                proc = new ProcessBuilder(getSite()).start();
-            } catch (IOException ex) {
-                Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            try{
-                proc.waitFor();
-            }catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        
-    }
+
+    
 
     public void setSite(String []site){
         result1=site;
