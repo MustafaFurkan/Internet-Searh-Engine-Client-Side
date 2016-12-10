@@ -46,10 +46,13 @@ public class NewJFrame extends javax.swing.JFrame {
     private String []result1;
     FileWriter fw;
     
-    public static void sendRequest(String address) throws IOException{
+    public static int sendRequest(String address) throws IOException{
         Socket s = new Socket(address, 8080);
+        if ( s == null)
+            return -1;
         input  = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        out = new PrintWriter(s.getOutputStream());               
+        out = new PrintWriter(s.getOutputStream());  
+        return 0;
     }
     
     
@@ -485,15 +488,12 @@ public class NewJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenu2MousePressed
 
     
-    public void getData1() throws IOException {
+    public int getData1() throws IOException {
         ownResult.clear();
         String str=new String();
-      
-
         str =   input.readLine();
         int numData1 = Integer.parseInt(str);
 
-        
         for( int i=0; i<numData1; ++i ){
             
             try{
@@ -501,9 +501,8 @@ public class NewJFrame extends javax.swing.JFrame {
                 ownResult.add(new Result(str1,input.readLine()));
             }catch(Exception e){
                 System.err.println(e.getMessage());
+                return 0;
             }
-        
-        
         }
         
         for(int i=0; i<numData1; ++i){
@@ -524,11 +523,11 @@ public class NewJFrame extends javax.swing.JFrame {
             outFile.write(decodedBytes);
             outFile.close();
         }
-        
+        return 1;
     }
     
     
-    public void getData(String search) throws IOException {
+    public int getData(String search) throws IOException {
         ownResult.clear();
         String str=new String();
       
@@ -545,6 +544,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 ownResult.add(new Result(str1,input.readLine()));
             }catch(Exception e){
                 System.err.println(e.getMessage());
+                return 0;
             }
         
         
@@ -568,7 +568,7 @@ public class NewJFrame extends javax.swing.JFrame {
             outFile.write(decodedBytes);
             outFile.close();
         }
-        
+        return 1;
     }
      
      
@@ -585,8 +585,6 @@ public class NewJFrame extends javax.swing.JFrame {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-           
-       
         if(jTextField1.getText().length() == 3){
             //JMenu1
             unhideElement();
@@ -853,9 +851,11 @@ public class NewJFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTextField1KeyPressed
 
-    public void listf(String directoryName, ArrayList<File> files) {
+    public int listf(String directoryName, ArrayList<File> files) {
         File directory = new File(directoryName);
 
+        if ( directory == null)
+            return 0;
     
         File[] fList = directory.listFiles();
         for (File file : fList) {
@@ -865,6 +865,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 listf(file.getAbsolutePath(), files);
             }
         }
+        return 1;
     }
     
     
@@ -1107,9 +1108,8 @@ public class NewJFrame extends javax.swing.JFrame {
     
     
     
-    public void checkinterPages(int pageInt){
+    public int checkinterPages(int pageInt){
         label1.setVisible(true);
-        System.out.println("asdasdasda:" + ownResult.size());
         label1.setText(ownResult.get(0).getUrl());
         label2.setVisible(true);
         label2.setText(ownResult.get(1).getUrl());
@@ -1129,6 +1129,48 @@ public class NewJFrame extends javax.swing.JFrame {
         jLabel4.setText(ownResult.get(3).getTitle());
         jLabel5.setVisible(true);
         jLabel5.setText(ownResult.get(4).getTitle());
+        
+        BufferedImage img=null;
+        ArrayList<File> ff=new ArrayList<File>();
+        if ( ff == null)
+            return 0;
+        listf("/home/canerbakar/Desktop/filesendtestfolder1",ff);
+
+        for (int z = 0; z < 5; z++) {
+
+            try {
+
+                img = ImageIO.read(new File(
+                ff.get(z).getAbsolutePath()));
+            } catch (IOException ex) {
+
+                Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            ImageIcon icon=new ImageIcon(img);
+            if ( z % 5 ==  0 ){
+                jLabel7.setIcon(icon);
+                //jLabel7.setText(jLabel1.getText());
+            }
+            else if ( z % 5 == 1){
+                jLabel8.setIcon(icon);
+                /*jLabel8.setText(jLabel2.getText());*/
+            }
+            else if ( z % 5 == 2){
+                jLabel9.setIcon(icon);
+               // jLabel7.setText(jLabel3.getText());
+            }
+            else if ( z % 5 == 3){
+                jLabel10.setIcon(icon);
+                //jLabel10.setText(jLabel4.getText());
+            }
+            else if ( z % 5 == 4){
+                jLabel11.setIcon(icon);
+                //jLabel10.setText(jLabel5.getText());
+            }
+
+        }
+        return 1;
     }
     
     public void checkFirstPage(){
@@ -1311,33 +1353,7 @@ public class NewJFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) throws IOException {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-        * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-        */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
         
-        /* Create and display the form */
-        
-        
-    
         String ip ="127.0.0.1";
         sendRequest(ip);
         
@@ -1426,16 +1442,6 @@ public class NewJFrame extends javax.swing.JFrame {
     private java.awt.Label label5;
     // End of variables declaration//GEN-END:variables
 
-
-    
-
-    public void setSite(String []site){
-        result1=site;
-    }
-
-    public String []getSite(){
-        return result1;
-    }
     
 }
 
