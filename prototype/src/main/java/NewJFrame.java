@@ -39,15 +39,18 @@ import org.apache.commons.codec.binary.Base64;
 public class NewJFrame extends javax.swing.JFrame {
     
     private static Object lock = new Object();
+    private static String PATH_SCREENSHOT = "/home/user/Desktop/filesendtestfolder/";
+    private static String PATH_HISTORY = "/home/user/Desktop/historyLog.txt";
+
     static BufferedReader input;
     static PrintWriter out;
     ArrayList<Result> ownResult = new ArrayList<Result>();
     public String result;
     private String []result1;
     FileWriter fw;
-    
+
     public static int sendRequest(String address) throws IOException{
-        Socket s = new Socket(address, 8080);
+        Socket s = new Socket(address, 9090);
         if ( s == null)
             return -1;
         input  = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -92,7 +95,8 @@ public class NewJFrame extends javax.swing.JFrame {
         hideElement();
         String str;
         FileReader fr;
-        File fileDir = new File("/home/canerbakar/Desktop/historyLog.txt");
+        File fileDir = new File(PATH_HISTORY);
+        fileDir.createNewFile();
         
         BufferedReader bw = new BufferedReader(
                     new InputStreamReader(
@@ -148,7 +152,7 @@ public class NewJFrame extends javax.swing.JFrame {
         setResizable(false);
         addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                formMouseClicked(evt);
+//                formMouseClicked(evt);
             }
         });
 
@@ -508,7 +512,7 @@ public class NewJFrame extends javax.swing.JFrame {
         for(int i=0; i<numData1; ++i){
 
             StringBuilder path = new StringBuilder();
-            path.append("/home/canerbakar/Desktop/filesendtestfolder1/");
+            path.append(PATH_SCREENSHOT);
             path.append(i);
             path.append(".jpg");
 
@@ -528,13 +532,13 @@ public class NewJFrame extends javax.swing.JFrame {
     
     
     public int getData(String search) throws IOException {
+
         ownResult.clear();
         String str=new String();
-      
-
         str =   input.readLine();
-        int numData = Integer.parseInt(str);
         String str2 =   input.readLine();
+
+        int numData = Integer.parseInt(str);
         int numData1 = Integer.parseInt(str2);
         
         for( int i=0; i<numData1; ++i ){
@@ -546,14 +550,12 @@ public class NewJFrame extends javax.swing.JFrame {
                 System.err.println(e.getMessage());
                 return 0;
             }
-        
-        
         }
         
         for(int i=0; i<numData1; ++i){
 
             StringBuilder path = new StringBuilder();
-            path.append("/home/canerbakar/Desktop/filesendtestfolder1/");
+            path.append(PATH_SCREENSHOT);
             path.append(i);
             path.append(".jpg");
 
@@ -562,7 +564,6 @@ public class NewJFrame extends javax.swing.JFrame {
 
             //create file
             File file = new File(path.toString());
-            file.createNewFile();
 
             OutputStream outFile = new FileOutputStream(file);
             outFile.write(decodedBytes);
@@ -585,7 +586,7 @@ public class NewJFrame extends javax.swing.JFrame {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        if(jTextField1.getText().length() == 3){
+        if(jTextField1.getText().length() <= 3){
             //JMenu1
             unhideElement();
             
@@ -638,7 +639,7 @@ public class NewJFrame extends javax.swing.JFrame {
             
             BufferedImage img=null;
             ArrayList<File> ff=new ArrayList<File>();
-            listf("/home/canerbakar/Desktop/filesendtestfolder1",ff);
+            listf(PATH_SCREENSHOT,ff);
             
             for (int z = 0; z < 5; z++) {
                         
@@ -674,7 +675,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
             
             }else{
-                getDialog(this,"Aramayı lütfen 3 harfli kelimeler ile yapın.");
+                getDialog(this,"Aramayı lütfen en fazla 3 harfli kelimeler ile yapın.");
             }
     }//GEN-LAST:event_jButton1MousePressed
 
@@ -682,7 +683,7 @@ public class NewJFrame extends javax.swing.JFrame {
      
     public String toEncode(String str) throws IOException{
         
-        File fileDir = new File("/home/canerbakar/Desktop/historyLog.txt");
+        File fileDir = new File("/home/user/Desktop/historyLog.txt");
         try {
             fw = new FileWriter(fileDir.getAbsoluteFile(),true);
         } catch (IOException ex) {
@@ -800,7 +801,7 @@ public class NewJFrame extends javax.swing.JFrame {
             
             BufferedImage img=null;
             ArrayList<File> ff=new ArrayList<File>();
-            listf("/home/canerbakar/Desktop/filesendtestfolder1",ff);
+            listf(PATH_SCREENSHOT,ff);
             
             for (int z = 0; z < 5; z++) {
 
@@ -1134,7 +1135,7 @@ public class NewJFrame extends javax.swing.JFrame {
         ArrayList<File> ff=new ArrayList<File>();
         if ( ff == null)
             return 0;
-        listf("/home/canerbakar/Desktop/filesendtestfolder1",ff);
+        listf(PATH_SCREENSHOT,ff);
 
         for (int z = 0; z < 5; z++) {
 
