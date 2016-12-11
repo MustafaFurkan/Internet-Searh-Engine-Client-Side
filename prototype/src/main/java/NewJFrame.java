@@ -859,9 +859,13 @@ public class NewJFrame extends javax.swing.JFrame {
             return 0;
     
         File[] fList = directory.listFiles();
+
         for (File file : fList) {
             if (file.isFile()) {
-                files.add(file);
+
+                if(file.toString().contains(".jpg")) {
+                    files.add(file);
+                }
             } else if (file.isDirectory()) {
                 listf(file.getAbsolutePath(), files);
             }
